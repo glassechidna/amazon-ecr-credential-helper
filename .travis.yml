@@ -14,6 +14,7 @@ script:
 
 after_success:
   - gox -arch="amd64" -os="linux windows darwin" ./ecr-login/cmd/ -o docker-credential-ecr-login
+  - ls -lhR
 
 deploy:
   provider: releases
