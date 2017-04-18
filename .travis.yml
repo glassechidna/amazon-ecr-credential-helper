@@ -1,12 +1,29 @@
 language: go
-sudo: false
-os:
-    - linux
-    - osx
+
 go:
-    - 1.5
-    - 1.6
-before_install: ./scripts/hack/symlink-gopath-travisci
+  - 1.6
+
+before_install:
+  - go get github.com/mitchellh/gox
+  - ./scripts/hack/symlink-gopath-travisci
+
 install: make get-deps
+
 script:
     - cd $HOME/gopath/src/github.com/awslabs/amazon-ecr-credential-helper; make test
+
+after_success:
+  - gox -arch="amd64" -os="linux windows darwin" ./ecr-login/cmd/ -o docker-credential-ecr-login
+
+deploy:
+  provider: releases
+  api_key:
+    secure: KYAxLtmZJbjPN3nJzspjvPK90SFHkNTbxUAQ5x/Qvnkw1T+mZx6uIj7cP+IePTSlOr/mIm/2yREuS1sDWWoJMxBSxhbG0zbfDCXB46Y0JjKMxqnAcGM8sQfoEzJnrQpBrNXnEmaOQ9obocu5dbmK97ELlsgWDTBemT+XZLbkR8BLpxSZHaUHQ5roybaNLTXPpgCsU0XJsjjj6WWIp1to4HrBKzuXw/IumOqx0+qpSqa/Oj6GXfoD7MjANWPoH2MMu5hhdP4f9y1VpCZ3hH0ntinRE+Vp+KBQriOTZ7r+yK/Wu5Y48LUSLeA4TxRYcsGOvuXdHPnSWAb4B6l3iuOlbsPyAO7f5PcNfMJVu4igYYe2K1ig3qx1Wa3puAoI9bZHq+pa0we8FedSFUlEgahti/XH2K4VWT8N4znVBhMlgjcI92jMK6LXcoxGVVU6Wlvy6H4DFl7Ha2nU8kH8sAeCOh7as0qshYDoHgCjJw8pLE66djDxLo8IkAvQA+P8TdwyRFOs/Um3pVhthdasQxVhaGJEwPeWcmNS76ONYWiBUJ+gVJjTiLovgVNY7KohH3vlp+WxY+f+9obn54UyV/gzGG4m+VxsAehqAlVC+HZZ8+Tg2StyiRXkL/XVNf1rLIiE0t4tDwfB5Tt41osSaaJFzy5BPqXvPSiLSJqUJg7olhI=
+  skip_cleanup: true
+  file:
+    - docker-credential-ecr-loginlinux_amd64
+    - docker-credential-ecr-login_darwin_amd64
+    - docker-credential-ecr-login_windows_amd64.exe
+  on:
+    tags: true
+    repo: glassechidna/amazon-ecr-credential-helper
