@@ -13,7 +13,7 @@ script:
     - cd $HOME/gopath/src/github.com/awslabs/amazon-ecr-credential-helper; make test
 
 after_success:
-  - gox -arch="amd64" -os="linux windows darwin" -o docker-credential-ecr-login ./ecr-login/cmd/
+  - gox -arch="amd64" -os="linux windows darwin" -output="docker-credential-ecr-login_{{.OS}}_{{.Arch}}" ./ecr-login/cmd/
   - ls -lhR
 
 deploy:
