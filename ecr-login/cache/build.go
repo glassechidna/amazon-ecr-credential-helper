@@ -46,14 +46,7 @@ func BuildCredentialsCache(awsSession *session.Session, region string, cacheDir 
 
 	cacheFilename := "cache.json"
 
-	credentials, err := awsSession.Config.Credentials.Get()
-	if err != nil {
-		log.Debugf("Could not fetch credentials for cache prefix: %s", err)
-		log.Debug("Disabling cache")
-		return NewNullCredentialsCache()
-	}
-
-	return NewFileCredentialsCache(cacheDir, cacheFilename, credentialsCachePrefix(region, &credentials))
+	return NewFileCredentialsCache(cacheDir, cacheFilename, credentialsCachePrefix(region, nil))
 }
 
 // Determine a key prefix for a credentials cache. Because auth tokens are scoped to an account and region, rely on provided
